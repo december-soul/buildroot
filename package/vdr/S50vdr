@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# Starts VDR
+#
+
+#set -x
+
+BIN=/usr/bin/runvdr
+PIDFILE=/var/run/vdr.pid
+
+start() {
+ echo -n "Starting VDR: "
+ detect_streamdevserver.sh
+ get_channelsconf.sh
+ MPEG2_ENABLED=`vcgencmd codec_enabled MPG2`
+ if [ $MPEG2_ENABLED == "MPG2=enabled" ]
+ then 
+	chvt 2
+	 start-stop-daemon -S -q -b -m -p $PIDFILE --exec $BIN
+ 	[ $? = 0 ] && echo "OK" || echo "FAIL"
+ else
+	clean 
+	echo "############################################################"
+	echo "#                                                          #"
+	echo "#           MPEG2 KEY IS INVALID OR MISSING                #"
+	echo "#                                                          #"
+	echo "############################################################"
+ fi
+}
+
+stop() {
+ echo -n "Stopping VDR: "
+ start-stop-daemon -K -q -p $PIDFILE
+ [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+restart() {
+ stop
+ sleep 1
+ start
+}
+
+case "$1" in
+ start)
+   start
+ ;;
+ stop)
+   stop
+ ;;
+ restart|reload)
+   restart
+ ;;
+ *)
+   echo "Usage: $0 {start|stop|restart}"
+ exit 1
+esac

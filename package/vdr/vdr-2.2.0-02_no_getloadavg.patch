@@ -1,0 +1,18 @@
+--- a/skinlcars.c	2015-03-14 20:54:45.930898534 +0100
++++ b/skinlcars.c	2015-03-14 20:55:40.595169600 +0100
+@@ -1107,6 +1107,7 @@
+      tColor ColorBg = frameColor;
+      if (initial)
+         osd->DrawText(xa00, yb04, tr("LOAD"), ColorFg, ColorBg, tinyFont, xa02 - xa00, yb05 - yb04, taTop | taLeft | taBorder);
++#ifndef __UCLIBC__
+      double SystemLoad;
+      if (getloadavg(&SystemLoad, 1) > 0) {
+         if (initial || SystemLoad != lastSystemLoad) {
+@@ -1115,6 +1116,7 @@
+            }
+         }
++#endif
+      }
+ }
+ 
+ void cSkinLCARSDisplayMenu::DrawMainBracket(void)
